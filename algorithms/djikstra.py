@@ -40,8 +40,9 @@ def djikstra(graph: GraphTypeHint, u: Hashable) -> Tuple[Dict, Dict]:
 
     :param u: hashable object; the source node
 
-    :return: 2 element tuple.  1st element is a dict keyed by the target node and values of the distance to the source
-    node.  2nd element is a dict keyed by the target node and its previous node in the shortest path.
+    :return: 2 element tuple.  1st element is a dict keyed by the source-node / target-node tuple and values of the
+    distance to the source node.  2nd element is a dict keyed by the source-node / target-node tuple and its
+    previous node in the shortest path.
     """
     if u not in graph.nodes:
         raise NodeNotInGraphException(u)
