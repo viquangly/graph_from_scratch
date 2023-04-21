@@ -10,6 +10,15 @@ from graph_cls import GraphTypeHint
 def _get_next_node_smallest_distance(
         distance_dict: Dict, visited_nodes: Set
 ) -> Tuple[Hashable, gt.Numeric]:
+    """
+    Helper function to get the next unvisited node with the smallest distance from source.
+
+    :param distance_dict: dict keyed by nodes and distances from the source node as values
+
+    :param visited_nodes: set of nodes already visited
+
+    :return: 2-element tuple of the next node and its corresponding distance from source.
+    """
     min_distance = float('inf')
     min_node = None
 
@@ -24,6 +33,16 @@ def _get_next_node_smallest_distance(
 
 
 def djikstra(graph: GraphTypeHint, u: Hashable) -> Tuple[Dict, Dict]:
+    """
+    Perform Djikstra's Algorithm for Shortest Path
+
+    :param graph: Graph or DiGraph object
+
+    :param u: hashable object; the source node
+
+    :return: 2 element tuple.  1st element is a dict keyed by the target node and values of the distance to the source
+    node.  2nd element is a dict keyed by the target node and its previous node in the shortest path.
+    """
     if u not in graph.nodes:
         raise NodeNotInGraphException(u)
 
