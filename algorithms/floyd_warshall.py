@@ -6,6 +6,15 @@ from graph_cls import GraphTypeHint
 
 
 def floyd_warshall(graph: GraphTypeHint) -> Tuple[Dict, Dict]:
+    """
+    Perform Floyd-Warshall's Algorithm for Shortest Path
+
+    :param graph: Graph or DiGraph object
+
+    :return: 2 element tuple.  1st element is a dict keyed by the source-node / target-node tuple and values of the
+    distance to the source node.  2nd element is a dict keyed by the source-node / target-node tuple and its
+    previous node in the shortest path.
+    """
     distance_dict = defaultdict(lambda: float('inf'))
     prev_dict = defaultdict(lambda: None)
 
