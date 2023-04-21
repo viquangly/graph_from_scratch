@@ -9,8 +9,19 @@ from exceptions import NodeNotInGraphException
 
 
 class DiGraph:
-
+    """
+    Class DiGraph for creating directed graphs.
+    """
     def __init__(self, nodes: Optional[gt.NodeCollection] = None, edges: Optional[gt.EdgeCollection] = None):
+        """
+        Instantiate an object of class DiGraph
+
+        :param nodes: optional; a collection of hashable objects representing nodes.  Default is None.
+
+        :param edges: optional; a collection tuples.  Default is None.  Tuples should be 2 or 3 elements
+        where the first 2 elements are hashable objects representing the source node and the target node.  The 3rd
+        element is a numeric value representing the edge weight; defaults to edge weight of 1 if not supplied.
+        """
         self.g = {}
         self.edge_weights = {}
 
@@ -39,6 +50,10 @@ class DiGraph:
         return len(self.edge_weights)
 
     @property
+    def is_directed(self) -> bool:
+        return True
+
+    @property
     def order(self) -> int:
         return len(self)
 
@@ -54,18 +69,54 @@ class DiGraph:
     def is_empty(self) -> bool:
         return bool(self)
 
+    @property
+    def is_weighted(self) -> bool:
+        return (min(self.edge_weights) == 1) and (max(self.edge_weights) == 1)
+
     def get_neighbors(self, node: Hashable) -> Set:
+        """
+        Get the neighbors of the node
+
+        :param node: hashable object
+
+        :return: set of neighboring nodes
+        """
         return deepcopy(self[node])
 
     def add_node(self, node: Hashable) -> None:
+        """
+        Add a node to the graph in-place.
+
+        :param node: hashable object
+
+        :return: None
+        """
         if node not in self:
             self.g[node] = set()
 
     def add_nodes_from(self, nodes: gt.NodeCollection) -> None:
+        """
+        Add a collection of nodes to the graph in-place.
+
+        :param nodes: collection of hashable objects
+
+        :return: None
+        """
         for node in nodes:
             self.add_node(node)
 
     def add_edge(self, u: Hashable, v: Hashable, weight: gt.Numeric = 1) -> None:
+        """
+        Add an edge to the graph in-place.
+
+        :param u: hashable object; the source node.
+
+        :param v: hashable object; the target node.
+
+        :param weight: numeric.  The edge weight.  Default is 1.
+
+        :return: None
+        """
         if weight <= 0:
             raise ValueError('weight must be > 0')
         self.add_node(u)
@@ -74,28 +125,76 @@ class DiGraph:
         self.edge_weights[(u, v)] = weight
 
     def add_edges_from(self, edges: gt.EdgeCollection) -> None:
+        """
+        Add a collection of edges to the graph in-place.
+
+        :param edges: collection of 2 or 3 element tuples.  Tuples should be 2 or 3 elements
+        where the first 2 elements are hashable objects representing the source node and the target node.  The 3rd
+        element is a numeric value representing the edge weight; defaults to edge weight of 1 if not supplied.
+
+        :return: None
+        """
         for edge in edges:
             self.add_edge(*edge)
 
     def remove_edge(self, u: Hashable, v: Hashable) -> None:
+        """
+        Remove the edge from the graph.
+
+        :param u: hashable object; the source node
+
+        :param v: hashable object; the target node
+
+        :return: None
+        """
         del self.edge_weights[(u, v)]
         self[u].remove(v)
 
     def remove_edges_from(self, edges: gt.EdgeCollection) -> None:
+        """
+        Remove the edges from the graph in-place.
+
+        :param edges: collection of 2-element tuples.  Do not include the edge weights in the tuples.
+
+        :return: None
+        """
         for edge in set(edges):
             self.remove_edge(*edge)
 
     def remove_node(self, node: Hashable) -> None:
+        """
+        Remove the node from the graph in-place.  Note: All edges incident on the node are also removed.
+
+        :param node: hashable object
+
+        :return: None
+        """
         neighbors = self.get_neighbors(node)
         for neighbor in neighbors:
             self.remove_edge(node, neighbor)
         del self.g[node]
 
     def remove_nodes_from(self, nodes: gt.NodeCollection) -> None:
+        """
+        Remove collection of nodes from the graph in-place.  Note: All edges incident on the nodes are also removed.
+
+        :param nodes: collection of hashable objects
+
+        :return: None
+        """
         for node in set(nodes):
             self.remove_node(node)
 
     def path_exists(self, u: Hashable, v: Hashable) -> bool:
+        """
+        Check if path exists from u to v.
+
+        :param u: hashable object; the source node.
+
+        :param v: hashable object; the target node.
+
+        :return: bool.  Return True if a path exists from u to v, else False.
+        """
         self._assert_node_exists(u)
         self._assert_node_exists(v)
 
@@ -113,23 +212,58 @@ class DiGraph:
         return False
 
     def get_edge_weight(self, u: Hashable, v: Hashable) -> gt.Numeric:
+        """
+        Get the edge weight for edge u-v.
+
+        :param u: hashable object; the source node.
+
+        :param v: hashable object; the target node.
+
+        :return: numeric value; the edge weight
+        """
         return self.edge_weights[(u, v)]
 
 
 class Graph(DiGraph):
-
+    """
+    Class Graph for undirected graphs.
+    """
     @property
     def size(self) -> int:
         # Divide by 2 because undirected
         return len(self.edge_weights) // 2
 
     def add_edge(self, u: Hashable, v: Hashable, weight: gt.Numeric = 1) -> None:
+        """
+        Add an edge to the graph in-place.  This method will create both u-v and v-u edges for undirected graph.
+
+        :param u: hashable object
+
+        :param v: hashable object
+
+        :param weight: numeric.  The edge weight.  Default is 1.
+
+        :return: None
+        """
         super().add_edge(u, v, weight)
         super().add_edge(v, u, weight)
 
     def remove_edge(self, u: Hashable, v: Hashable) -> None:
+        """
+        Remove the edge from the graph.  Note: This method will remove both u-v and v-u edges for undirected graph.
+
+        :param u: hashable object
+
+        :param v: hashable object
+
+        :return: None
+        """
         super().remove_edge(u, v)
         super().remove_edge(v, u)
+
+    @property
+    def is_directed(self) -> bool:
+        return False
 
 
 GraphTypeHint = Union[Graph, DiGraph]
