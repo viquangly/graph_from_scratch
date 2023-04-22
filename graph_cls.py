@@ -3,9 +3,32 @@ from __future__ import annotations
 
 from copy import deepcopy
 from typing import Hashable, Optional, Set, Union
+import warnings
 
 import graph_typing as gt
 from exceptions import NodeNotInGraphException
+
+
+def to_undirected(graph: DiGraph) -> Graph:
+    """
+    Convert a directed graph to undirected graph.  Note: If edge U-V has different weight than edge V-U
+    in the directed graph, weight of one edge will be overwritten by the other during the conversion to undirected
+    graph.
+
+    :param graph: directed graph
+
+    :return: undirected graph
+    """
+    out_graph = Graph()
+    for edge, weight in graph.edge_weights.items():
+        u, v = edge
+        reverse_edge = (v, u)
+        if reverse_edge in out_graph.edge_weights:
+            reverse_edge_weight = out_graph.edge_weights[(v, u)]
+            if reverse_edge_weight != weight:
+                warnings.warn(f'{u=}-{v=} with {weight=} will overwrite {v=}-{u=} weight={reverse_edge_weight}')
+        out_graph.add_edge(u, v, weight)
+    return out_graph
 
 
 class DiGraph:
