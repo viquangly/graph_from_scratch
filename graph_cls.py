@@ -22,7 +22,7 @@ def to_undirected(graph: DiGraph) -> Graph:
     if not graph.is_directed:
         raise TypeError('graph must be directed graph')
 
-    out_graph = Graph()
+    out_graph = Graph(nodes=graph.nodes)
     for edge, weight in graph.edge_weights.items():
         u, v = edge
         reverse_edge = (v, u)
@@ -31,6 +31,23 @@ def to_undirected(graph: DiGraph) -> Graph:
             if reverse_edge_weight != weight:
                 warnings.warn(f'{u=}-{v=} with {weight=} will overwrite {v=}-{u=} weight={reverse_edge_weight}')
         out_graph.add_edge(u, v, weight)
+    return out_graph
+
+
+def to_reversed(graph: DiGraph) -> DiGraph:
+    """
+    Create a directed graph with the direction of edges reversed.
+
+    :param graph: directed graph
+
+    :return: directed graph with direction reversed
+    """
+    if not graph.is_directed:
+        raise TypeError('graph must be directed')
+    out_graph = DiGraph(graph.nodes)
+    for edge, weight in graph.edge_weights.items():
+        u, v = edge
+        out_graph.add_edge(v, u, weight)
     return out_graph
 
 
@@ -143,8 +160,6 @@ class DiGraph:
 
         :return: None
         """
-        if weight <= 0:
-            raise ValueError('weight must be > 0')
         self.add_node(u)
         self.add_node(v)
         self[u].add(v)
