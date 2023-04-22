@@ -9,13 +9,16 @@ import graph_typing as gt
 from exceptions import NodeNotInGraphException
 
 
-def to_undirected(graph: DiGraph) -> Graph:
+def to_undirected(graph: DiGraph, suppress_warning: bool = False) -> Graph:
     """
     Convert a directed graph to undirected graph.  Note: If edge u-v has different weight than edge v-u
     in the directed graph, weight of one edge will be overwritten by the other during the conversion to undirected
     graph.
 
     :param graph: directed graph
+
+    :param suppress_warning: bool; default is False.  If True, raise warning if edge u-v has different weight that
+    edge v-u, as the prior weight will be overwritten by new weight in undirected graph
 
     :return: undirected graph
     """
@@ -28,7 +31,7 @@ def to_undirected(graph: DiGraph) -> Graph:
         reverse_edge = (v, u)
         if reverse_edge in out_graph.edge_weights:
             reverse_edge_weight = out_graph.edge_weights[(v, u)]
-            if reverse_edge_weight != weight:
+            if (reverse_edge_weight != weight) and not suppress_warning:
                 warnings.warn(f'{u=}-{v=} with {weight=} will overwrite {v=}-{u=} weight={reverse_edge_weight}')
         out_graph.add_edge(u, v, weight)
     return out_graph
