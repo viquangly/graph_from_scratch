@@ -26,22 +26,35 @@ def test_degree_centrality(normalize, expected):
 
 
 @pytest.mark.parametrize(
-    'in_degree,normalize,expected',
+    'normalize,expected',
     [
-        (False, False, {'a': 2, 'b': 2, 'c': 1, 'd': 0, 'e': 1, 'f': 1, 'g': 1, 'z': 0}),
-        (False, True, {'a': 2 / 7, 'b': 2 / 7, 'c': 1 / 7, 'd': 0, 'e': 1 / 7, 'f': 1 / 7, 'g': 1 / 7, 'z': 0}),
-        (True, False, {'a': 0, 'b': 1, 'c': 1, 'd': 3, 'e': 1, 'f': 1, 'g': 1, 'z': 0}),
-        (True, True, {'a': 0, 'b': 1 / 7, 'c': 1 / 7, 'd': 3 / 7, 'e': 1 / 7, 'f': 1 / 7, 'g': 1 / 7, 'z': 0})
+        (
+            False,
+            {
+                'out': {'a': 2, 'b': 2, 'c': 1, 'd': 0, 'e': 1, 'f': 1, 'g': 1, 'z': 0},
+                'in': {'a': 0, 'b': 1, 'c': 1, 'd': 3, 'e': 1, 'f': 1, 'g': 1, 'z': 0}
+            }
+        ),
+        (
+            True,
+            {
+                'out': {'a': 2 / 7, 'b': 2 / 7, 'c': 1 / 7, 'd': 0, 'e': 1 / 7, 'f': 1 / 7, 'g': 1 / 7, 'z': 0},
+                'in': {'a': 0, 'b': 1 / 7, 'c': 1 / 7, 'd': 3 / 7, 'e': 1 / 7, 'f': 1 / 7, 'g': 1 / 7, 'z': 0}
+            }
+        ),
     ]
 )
-def test_directed_degree_centrality(in_degree, normalize, expected):
+def test_directed_degree_centrality(normalize, expected):
     graph = ds.weighted_path_graph(True)
-    centrality = ct.directed_degree_centrality(graph, in_degree, normalize)
-    extra_nodes = set(expected).symmetric_difference(set(centrality))
-    assert not extra_nodes
+    centrality = ct.degree_centrality(graph, normalize)
+    for direction in centrality.keys():
+        expected_ = expected[direction]
+        actual_ = centrality[direction]
+        extra_nodes = set(expected_).symmetric_difference(set(actual_))
+        assert not extra_nodes
 
-    for k, v in centrality.items():
-        if normalize:
-            assert v == pytest.approx(expected[k])
-        else:
-            assert v == expected[k]
+        for k, v in actual_.items():
+            if normalize:
+                assert v == pytest.approx(expected_[k])
+            else:
+                assert v == expected_[k]
