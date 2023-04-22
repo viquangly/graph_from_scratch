@@ -11,7 +11,7 @@ from exceptions import NodeNotInGraphException
 
 def to_undirected(graph: DiGraph) -> Graph:
     """
-    Convert a directed graph to undirected graph.  Note: If edge U-V has different weight than edge V-U
+    Convert a directed graph to undirected graph.  Note: If edge u-v has different weight than edge v-u
     in the directed graph, weight of one edge will be overwritten by the other during the conversion to undirected
     graph.
 
@@ -19,6 +19,9 @@ def to_undirected(graph: DiGraph) -> Graph:
 
     :return: undirected graph
     """
+    if not graph.is_directed:
+        raise TypeError('graph must be directed graph')
+
     out_graph = Graph()
     for edge, weight in graph.edge_weights.items():
         u, v = edge
