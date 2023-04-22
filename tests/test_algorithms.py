@@ -2,7 +2,7 @@
 from algorithms.djikstra import djikstra
 from algorithms.floyd_warshall import floyd_warshall
 import paths.shortest_path as sp
-from tests import datasets as ds
+import datasets as ds
 
 
 def test_djisktra():

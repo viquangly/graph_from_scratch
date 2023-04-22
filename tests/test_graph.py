@@ -2,7 +2,7 @@
 
 import pytest
 
-from tests import datasets as ds
+import datasets as ds
 
 
 @pytest.mark.parametrize('is_directed', [False, True])

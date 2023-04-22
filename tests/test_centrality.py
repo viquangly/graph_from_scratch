@@ -1,7 +1,7 @@
 
 import pytest
 
-from tests import datasets as ds
+import datasets as ds
 from centrality import centrality as ct
 
 
