@@ -17,9 +17,12 @@ def test_degree_centrality(normalize, expected):
     centrality = ct.degree_centrality(graph, normalize)
     extra_nodes = set(expected).symmetric_difference(set(centrality))
     assert not extra_nodes
-    acceptable_error = 1e-6 if normalize else 0
+
     for k, v in centrality.items():
-        assert v == pytest.approx(expected[k], acceptable_error)
+        if normalize:
+            assert v == pytest.approx(expected[k])
+        else:
+            assert v == expected[k]
 
 
 @pytest.mark.parametrize(
@@ -36,6 +39,9 @@ def test_directed_degree_centrality(in_degree, normalize, expected):
     centrality = ct.directed_degree_centrality(graph, in_degree, normalize)
     extra_nodes = set(expected).symmetric_difference(set(centrality))
     assert not extra_nodes
-    acceptable_error = 1e-6 if normalize else 0
+
     for k, v in centrality.items():
-        assert v == pytest.approx(expected[k], acceptable_error)
+        if normalize:
+            assert v == pytest.approx(expected[k])
+        else:
+            assert v == expected[k]
