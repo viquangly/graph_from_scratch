@@ -37,3 +37,25 @@ def weighted_path_graph(is_directed: bool = False) -> GraphTypeHint:
     ]
     graph_type = DiGraph if is_directed else Graph
     return graph_type(nodes=['z'], edges=edges)
+
+
+def connected_component_graph() -> DiGraph:
+    #                         _____
+    #                         |   |
+    #   a<--->b<----f<----g<--i----
+    #   ^     |     |  \  ^  /
+    #   |     |     |   \ | /
+    #   v     v     v    \|/
+    #   c---->d<--->e<----h
+
+    edges = [
+        ('a', 'b'), ('b', 'a'),
+        ('a', 'c'), ('c', 'a'),
+        ('b', 'd'), ('c', 'd'),
+        ('d', 'e'), ('e', 'd'),
+        ('f', 'b'), ('f', 'e'), ('f', 'h'),
+        ('g', 'f'),
+        ('h', 'e'), ('h', 'g'),
+        ('i', 'g'), ('i', 'h'), ('i', 'i')
+    ]
+    return DiGraph(edges=edges)
