@@ -26,7 +26,7 @@ def path_graph(is_directed: bool = False) -> GraphTypeHint:
 def weighted_path_graph(is_directed: bool = False) -> GraphTypeHint:
     #   _________
     #  /         \
-    # a---b---c---d
+    # a---b---c---d   z
     #     \       |
     #      e      |
     #       \__f__g

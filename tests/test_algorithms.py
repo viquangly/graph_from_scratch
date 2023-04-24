@@ -1,8 +1,12 @@
 
+import pytest
+
 from algorithms.djikstra import djikstra
 from algorithms.floyd_warshall import floyd_warshall
-import paths.shortest_path as sp
+from algorithms.kosaraju import kosaraju
+import graph_cls as gc
 import datasets as ds
+import paths.shortest_path as sp
 
 
 def test_djisktra():
@@ -19,3 +23,16 @@ def test_floyd_warshall():
     shortest_path, distance = sp._shortest_path(distance_dict, prev_dict, 'a', 'd')
     assert shortest_path == list('abefgd')
     assert distance == 5
+
+
+@pytest.mark.parametrize(
+    'graph,expected',
+    [
+        (ds.connected_component_graph(), {('a', 'b', 'c'), ('d', 'e'), ('f', 'g', 'h'), ('i',)}),
+        (gc.to_directed(ds.weighted_path_graph(False)), {tuple('abcdefg'), ('z',)}),
+        (ds.weighted_path_graph(True), {('a',), ('b',), ('c',), ('d',), ('e',), ('f',), ('g',), ('z',)})
+    ]
+)
+def test_kosaraju(graph, expected):
+    scc = {tuple(sorted(x)) for x in kosaraju(graph)}
+    assert not scc.symmetric_difference(expected)
