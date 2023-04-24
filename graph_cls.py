@@ -9,6 +9,24 @@ import graph_typing as gt
 from exceptions import NodeNotInGraphException
 
 
+def to_directed(graph: Graph) -> DiGraph:
+    """
+    Convert an undirected graph to a directed graph
+
+    :param graph: an undirected graph
+
+    :return: directed graph
+    """
+    if graph.is_directed:
+        raise TypeError('graph must be an undirected graph')
+
+    out_graph = DiGraph(nodes=graph.nodes)
+    for edge, weight in graph.edge_weights.items():
+        u, v = edge
+        out_graph.add_edge(u, v, weight)
+    return out_graph
+
+
 def to_undirected(graph: DiGraph, suppress_warning: bool = False) -> Graph:
     """
     Convert a directed graph to undirected graph.  Note: If edge u-v has different weight than edge v-u
